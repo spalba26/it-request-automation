@@ -4,6 +4,7 @@ def init_db():
     connection = None
     try:
         connection = connect("app/request.db")
+        connection.execute("PRAGMA foreign_keys = ON")
         cursor = connection.cursor()
         cursor.execute(
             """
@@ -14,6 +15,19 @@ def init_db():
                 status TEXT NOT NULL,
                 assigned_team TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS software_incidents (
+                request_id INTEGER PRIMARY KEY,
+                resource TEXT NOT NULL,
+                description TEXT NOT NULL,
+                impact TEXT NOT NULL,
+                urgency TEXT NOT NULL,
+                priority TEXT NOT NULL,
+                FOREIGN KEY (request_id) REFERENCES requests (id)
             )
             """
         )
